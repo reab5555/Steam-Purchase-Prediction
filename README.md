@@ -1,4 +1,4 @@
-# Steam Game Purchase Prediction Pipeline Using Review Patterns and Sentiment Analysis
+# Steam Game Purchase Prediction Pipeline
 
 This project aims to predict whether a user is likely to purchase a Steam game based on **other users' review patterns and sentiments**. The pipeline leverages AWS infrastructure, Apache Airflow for orchestration, and a combination of tools including Apache Spark, SageMaker, and XGBoost to analyze reviews and predict purchase behavior.
 
