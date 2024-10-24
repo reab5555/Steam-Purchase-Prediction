@@ -1,10 +1,10 @@
-# Steam Game Reviews Sentiment Analysis & Prediction Pipeline
+# Steam Game Purchase Prediction Pipeline Using Sentiment Analysis
 
-This project is designed to analyze and predict sentiments from Steam game reviews using AWS infrastructure, Apache Airflow for orchestration, and a combination of tools including Apache Spark, SageMaker, and XGBoost.
+This project aims to predict whether a user will purchase a Steam game based on their review patterns. The pipeline leverages AWS infrastructure, Apache Airflow for orchestration, and a combination of tools including Apache Spark, SageMaker, and XGBoost to analyze the sentiment of game reviews and predict game purchases.
 
 ## Project Overview
 
-The goal of the project is to build a sentiment analysis and prediction pipeline for over 2.4M Steam game reviews. The process begins by extracting raw review data stored in MongoDB, performing sentiment analysis using Hugging Face models, and finally training a machine learning model (XGBoost) on the pre-processed data to predict user behaviors or sentiments.
+The goal of the project is to build a machine learning pipeline that predicts whether a user will make a **Steam game purchase** based on their review behavior. The process begins by extracting raw review data stored in MongoDB, performing sentiment analysis using Hugging Face models, and finally training a machine learning model (XGBoost) to make predictions about purchases based on pre-processed user review data.
 
 ![Project Diagram](./ERDs - Steam.png)
 
@@ -12,7 +12,7 @@ The goal of the project is to build a sentiment analysis and prediction pipeline
 
 1. **Data Ingestion (MongoDB -> Parquet)**:
    - Steam game reviews are fetched from a MongoDB database.
-   - The data is processed into Parquet format using Apache Airflow, and stored in AWS S3 as the data lake.
+   - The data is processed into Parquet format using Apache Airflow and stored in AWS S3 as the data lake.
 
 2. **Sentiment Analysis**:
    - A Hugging Face model deployed on AWS SageMaker performs sentiment analysis on the review texts.
@@ -20,36 +20,37 @@ The goal of the project is to build a sentiment analysis and prediction pipeline
 
 3. **Data Preprocessing**:
    - Reviews are sampled using AWS EMR (Elastic MapReduce) and Apache Spark.
-   - The preprocessed data includes scaling and encoding features to prepare for model training.
+   - The preprocessed data includes scaling and encoding features to prepare for model training. Features like review patterns, sentiment scores, and review counts are extracted.
 
-4. **Model Training & Evaluation**:
-   - XGBoost, a scalable and high-performance machine learning library, is used for training on the pre-processed data in SageMaker.
-   - The model is then evaluated using metrics such as AUC (Area Under the Curve).
+4. **Purchase Prediction Model (Training & Evaluation)**:
+   - XGBoost, a scalable and high-performance machine learning library, is used to train a predictive model on the pre-processed data. The model is designed to predict whether a user will purchase a game based on their review behavior and patterns.
+   - The model is evaluated using metrics such as AUC (Area Under the Curve).
 
 ## Key Components
 
 ### 1. **Data Preparation**
    - Script: [`prepare_data.py`](./prepare_data.py)
-   - This script performs data cleaning and transformation using PySpark. It extracts the relevant features, scales numeric columns, and encodes categorical features.
-   - Processed data is split into training and validation sets and stored back in S3.
+   - This script performs data cleaning and transformation using PySpark. It extracts relevant features from the game reviews and processes them to be ready for model training. It scales numeric columns and encodes categorical features.
+   - The processed data is split into training and validation sets and stored back in S3.
 
 ### 2. **Sentiment Analysis**
    - Script: [`sentiment_analysis.py`](./sentiment_analysis.py)
    - A pre-trained Hugging Face model (`distilbert-base-uncased-finetuned-sst-2-english`) deployed on AWS SageMaker is used to analyze the sentiment of game reviews.
-   - The results (positive/negative scores) are written back to S3 in Parquet format.
+   - Sentiment scores are added to each review, which are later used in predicting game purchases. The processed data is saved back to S3 in Parquet format.
 
-### 3. **Model Training**
+### 3. **Purchase Prediction Model Training**
    - Script: [`train.py`](./train.py)
-   - A gradient-boosted tree classifier (GBTClassifier) is trained using the pre-processed features.
-   - Evaluation metrics (such as AUC) are logged, and the trained model is saved in S3 for future use.
+   - A gradient-boosted tree classifier (GBTClassifier) from XGBoost is trained using features extracted from the reviews and the sentiment analysis results.
+   - The model predicts whether the user will make a purchase based on their review behavior, and the accuracy of the model is evaluated using metrics like AUC (Area Under the Curve).
+   - The trained model is saved to S3 for future inference.
 
 ### 4. **EMR Cluster Management**
    - Script: [`emr_cluster_manager.py`](./emr_cluster_manager.py)
-   - This script manages the lifecycle of an AWS EMR cluster, which is used for distributed computing with Spark. It can create, manage, and terminate EMR clusters as needed.
+   - This script manages the lifecycle of an AWS EMR cluster, which is used for distributed computing with Spark. It handles the creation, management, and termination of EMR clusters.
 
 ### 5. **Workflow Orchestration**
    - Script: [`main.py`](./main.py)
-   - This script orchestrates the entire workflow, using the EMR cluster to prepare data and train the model. It also handles error management and logs the progress of each step.
+   - The `main.py` script orchestrates the entire workflow, from data preparation to model training and evaluation. It integrates with the EMR cluster to perform data preparation and model training steps. The workflow is logged, and errors are handled throughout the process.
 
 ## Technology Stack
 
