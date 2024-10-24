@@ -37,7 +37,7 @@ def main():
     logger.info(f"Loading validation data from {args.validation}")
     validation_df = spark.read.parquet(args.validation)
 
-    # Assemble features into a vector
+    # Assemble features into a vector (excluding the label column)
     feature_columns = [col for col in train_df.columns if col != 'label']
     assembler = VectorAssembler(inputCols=feature_columns, outputCol='features')
 
