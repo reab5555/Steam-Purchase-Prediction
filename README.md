@@ -6,7 +6,7 @@ This project aims to predict whether a user is likely to purchase a Steam game b
 
 The goal of the project is to build a machine learning pipeline that predicts whether a user will purchase a **Steam game** based on the behavior and sentiment of previous reviewers. By analyzing review patterns, sentiment scores, and review behavior, the model aims to forecast a game’s attractiveness and likelihood of being purchased by other users.
 
-![Project Diagram](./ERDs - Steam.png)
+<img src="flow.png" width="500">
 
 ### Workflow:
 
