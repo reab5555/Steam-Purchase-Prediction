@@ -1,0 +1,13 @@
+boto3
+sagemaker
+awswrangler
+tqdm
+python-dotenv
+aws-glue-sessions
+black
+mypy
+transformers
+pandas
+numpy
+scikit-learn
+pyarrow
