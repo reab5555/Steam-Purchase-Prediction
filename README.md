@@ -1,10 +1,10 @@
-# Steam Game Purchase Prediction Pipeline Using Sentiment Analysis
+# Steam Game Purchase Prediction Pipeline Using Review Patterns and Sentiment Analysis
 
-This project aims to predict whether a user will purchase a Steam game based on their review patterns. The pipeline leverages AWS infrastructure, Apache Airflow for orchestration, and a combination of tools including Apache Spark, SageMaker, and XGBoost to analyze the sentiment of game reviews and predict game purchases.
+This project aims to predict whether a user is likely to purchase a Steam game based on **other users' review patterns and sentiments**. The pipeline leverages AWS infrastructure, Apache Airflow for orchestration, and a combination of tools including Apache Spark, SageMaker, and XGBoost to analyze reviews and predict purchase behavior.
 
 ## Project Overview
 
-The goal of the project is to build a machine learning pipeline that predicts whether a user will make a **Steam game purchase** based on their review behavior. The process begins by extracting raw review data stored in MongoDB, performing sentiment analysis using Hugging Face models, and finally training a machine learning model (XGBoost) to make predictions about purchases based on pre-processed user review data.
+The goal of the project is to build a machine learning pipeline that predicts whether a user will purchase a **Steam game** based on the behavior and sentiment of previous reviewers. By analyzing review patterns, sentiment scores, and review behavior, the model aims to forecast a game’s attractiveness and likelihood of being purchased by other users.
 
 ![Project Diagram](./ERDs - Steam.png)
 
@@ -23,7 +23,7 @@ The goal of the project is to build a machine learning pipeline that predicts wh
    - The preprocessed data includes scaling and encoding features to prepare for model training. Features like review patterns, sentiment scores, and review counts are extracted.
 
 4. **Purchase Prediction Model (Training & Evaluation)**:
-   - XGBoost, a scalable and high-performance machine learning library, is used to train a predictive model on the pre-processed data. The model is designed to predict whether a user will purchase a game based on their review behavior and patterns.
+   - XGBoost, a scalable and high-performance machine learning library, is used to train a predictive model on the pre-processed data. The model is designed to predict whether a **new user** will purchase a game based on the review patterns and sentiments of existing users.
    - The model is evaluated using metrics such as AUC (Area Under the Curve).
 
 ## Key Components
@@ -36,12 +36,13 @@ The goal of the project is to build a machine learning pipeline that predicts wh
 ### 2. **Sentiment Analysis**
    - Script: [`sentiment_analysis.py`](./sentiment_analysis.py)
    - A pre-trained Hugging Face model (`distilbert-base-uncased-finetuned-sst-2-english`) deployed on AWS SageMaker is used to analyze the sentiment of game reviews.
-   - Sentiment scores are added to each review, which are later used in predicting game purchases. The processed data is saved back to S3 in Parquet format.
+   - Sentiment scores are added to each review, which are later used in predicting future game purchases. The processed data is saved back to S3 in Parquet format.
 
 ### 3. **Purchase Prediction Model Training**
    - Script: [`train.py`](./train.py)
-   - A gradient-boosted tree classifier (GBTClassifier) from XGBoost is trained using features extracted from the reviews and the sentiment analysis results.
-   - The model predicts whether the user will make a purchase based on their review behavior, and the accuracy of the model is evaluated using metrics like AUC (Area Under the Curve).
+   - A gradient-boosted tree classifier (GBTClassifier) from XGBoost is trained using features extracted from the reviews and sentiment analysis results.
+   - The model predicts whether a new user will make a purchase based on the behavior and sentiment of other users who have already reviewed the game.
+   - The accuracy of the model is evaluated using metrics like AUC (Area Under the Curve).
    - The trained model is saved to S3 for future inference.
 
 ### 4. **EMR Cluster Management**
